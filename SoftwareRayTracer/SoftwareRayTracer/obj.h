@@ -208,8 +208,9 @@ int mtl_parse(char* filename, vector<Material>* mtls)
 	return 1;
 }
 
-int obj_parse(const char* filename, vector<Object>* objs, float scale)
+int obj_parse(const char* filename, std::vector<triangle>* io_tris, float scale)
 {
+	vector<Object> objs;
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
@@ -288,14 +289,14 @@ int obj_parse(const char* filename, vector<Object>* objs, float scale)
 		obj.tris.push_back(tri);
 	}
 
-	objs->push_back(obj);
+	objs.push_back(obj);
 
-	int num_tris = 0;
-	for (auto& o : *objs)
+	for (auto& obj : objs)
 	{
-		num_tris += o.tris.size();
+		io_tris->insert(io_tris->end(), obj.tris.begin(), obj.tris.end());
 	}
-	printf("successfully parsed %s and read %d object(s)  %d triangles \n", filename, objs->size(), num_tris);
+
+	printf("successfully parsed %s and read %d object(s)  %d triangles \n", filename, objs.size(), io_tris->size());
 
 }
 /*
